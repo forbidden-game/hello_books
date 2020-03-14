@@ -1,6 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-/// 首页
+/// 首页(包含抽屉效果)
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title}) : super(key: key);
   final String title;
@@ -48,23 +49,81 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: ListView.builder(
-        itemCount: 30,
-        itemBuilder: (context, index) {
-          return ListTile(
-            leading: Icon(Icons.book),
-            title: Text("《深入理解计算机系统》第$index版"),
-            subtitle: Text("卡内基-梅隆、北京大学、清华大学、上海交通大学等国内外众多知名高校选用指定教材。"),
-            trailing: Icon(Icons.arrow_forward_ios),
-            contentPadding: EdgeInsets.all(10),
-          );
-        },
-      ),
+      body: _HomePageBody(),
       floatingActionButton: FloatingActionButton(
         onPressed: _launchPublishPage,
         tooltip: '发布',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+/// 首页 Body 部分
+class _HomePageBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+        itemCount: 10,
+        padding: const EdgeInsets.all(5.0),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 5.0,
+          mainAxisSpacing: 5.0,
+          childAspectRatio: 0.6,
+        ),
+        itemBuilder: (context, index) {
+          return _BookCard();
+        });
+  }
+}
+
+/// 列表每个卡片 Widget
+class _BookCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        debugPrint("test");
+      },
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(6.0),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Expanded(
+              child: CachedNetworkImage(
+                imageUrl:
+                    "https://img1.doubanio.com/view/subject/l/public/s29195878.jpg",
+                fit: BoxFit.fill,
+              ),
+            ),
+            ListTile(
+              leading: ClipOval(
+                child: CachedNetworkImage(
+                  width: 40,
+                  height: 40,
+                  imageUrl:
+                      "http://5b0988e595225.cdn.sohucs.com/images/20180830/55833f7db8894d88b459588c33da5a19.jpeg",
+                  fit: BoxFit.cover,
+                ),
+              ),
+              title: Text(
+                "《深入理解计算机系统》",
+                style: Theme.of(context).textTheme.title,
+              ),
+              subtitle: Text(
+                "第三版",
+                style: Theme.of(context).textTheme.subtitle,
+              ),
+            ),
+          ],
+        ),
+        elevation: 5.0,
+      ),
     );
   }
 }
