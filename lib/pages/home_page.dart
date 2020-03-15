@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:hellobooks/constant/constants.dart';
+import 'package:hellobooks/widgets/Label.dart';
 
 /// 首页(包含抽屉效果)
 class HomePage extends StatefulWidget {
@@ -70,7 +72,7 @@ class _HomePageBody extends StatelessWidget {
           crossAxisCount: 2,
           crossAxisSpacing: 5.0,
           mainAxisSpacing: 5.0,
-          childAspectRatio: 0.6,
+          childAspectRatio: 0.8,
         ),
         itemBuilder: (context, index) {
           return _BookCard();
@@ -92,32 +94,65 @@ class _BookCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(6.0),
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Expanded(
               child: CachedNetworkImage(
                 imageUrl:
                     "https://img1.doubanio.com/view/subject/l/public/s29195878.jpg",
-                fit: BoxFit.fill,
-              ),
-            ),
-            ListTile(
-              leading: ClipOval(
-                child: CachedNetworkImage(
-                  width: 40,
-                  height: 40,
-                  imageUrl:
-                      "http://5b0988e595225.cdn.sohucs.com/images/20180830/55833f7db8894d88b459588c33da5a19.jpeg",
-                  fit: BoxFit.cover,
+                fit: BoxFit.contain,
+                placeholder: (context, url) => Image.asset(
+                  "res/images/img_loading.gif",
                 ),
               ),
-              title: Text(
-                "《深入理解计算机系统》",
-                style: Theme.of(context).textTheme.title,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: BookPadding.linePadding,
+                horizontal: BookPadding.cardPadding,
               ),
-              subtitle: Text(
-                "第三版",
-                style: Theme.of(context).textTheme.subtitle,
+              child: Text(
+                "深入理解计算机系统",
+                style: Theme.of(context).textTheme.display1,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: BookPadding.cardPadding,
+                right: BookPadding.cardPadding,
+                bottom: BookPadding.linePadding,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(
+                        "http://5b0988e595225.cdn.sohucs.com/images/20180830/55833f7db8894d88b459588c33da5a19.jpeg"),
+                    backgroundColor: Colors.grey,
+                    radius: 13.0,
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: BookPadding.labelPadding,
+                      ),
+                      child: Text(
+                        "昵称",
+                        style: Theme.of(context).textTheme.display2,
+                      ),
+                    ),
+                  ),
+                  Label("租"),
+                  Text(
+                    "￥2.0",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                ],
               ),
             ),
           ],
