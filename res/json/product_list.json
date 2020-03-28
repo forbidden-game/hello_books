@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "user": {
+      "id": 1,
+      "avatar": "http://5b0988e595225.cdn.sohucs.com/images/20180830/55833f7db8894d88b459588c33da5a19.jpeg",
+      "name": "姓名",
+      "phoneNumber": "24254236536"
+    },
+    "book": {
+      "id": 1,
+      "name": "深入理解计算机系统",
+      "desc": "经典好书",
+      "imgUrl": "https://img1.doubanio.com/view/subject/l/public/s29195878.jpg",
+      "price": 2.0
+    }
+  },
+  {
+    "id": 2,
+    "user": {
+      "id": 1,
+      "avatar": "http://5b0988e595225.cdn.sohucs.com/images/20180830/55833f7db8894d88b459588c33da5a19.jpeg",
+      "name": "姓名",
+      "phoneNumber": "24254236536"
+    },
+    "book": {
+      "id": 1,
+      "name": "深入理解计算机系统",
+      "desc": "经典好书",
+      "imgUrl": "https://img1.doubanio.com/view/subject/l/public/s29195878.jpg",
+      "price": 2.0
+    }
+  },
+  {
+    "id": 3,
+    "user": {
+      "id": 1,
+      "avatar": "http://5b0988e595225.cdn.sohucs.com/images/20180830/55833f7db8894d88b459588c33da5a19.jpeg",
+      "name": "姓名",
+      "phoneNumber": "24254236536"
+    },
+    "book": {
+      "id": 1,
+      "name": "深入理解计算机系统",
+      "desc": "经典好书",
+      "imgUrl": "https://img1.doubanio.com/view/subject/l/public/s29195878.jpg",
+      "price": 2.0
+    }
+  }
+]

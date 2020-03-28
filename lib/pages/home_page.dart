@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hellobooks/constant/constants.dart';
+import 'package:hellobooks/model/data.dart';
 import 'package:hellobooks/widgets/Label.dart';
 
 /// 首页(包含抽屉效果)
@@ -62,11 +66,36 @@ class _HomePageState extends State<HomePage> {
 }
 
 /// 首页 Body 部分
-class _HomePageBody extends StatelessWidget {
+class _HomePageBody extends StatefulWidget {
+  @override
+  __HomePageBodyState createState() => __HomePageBodyState();
+}
+
+class __HomePageBodyState extends State<_HomePageBody> {
+  List<Product> _products = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _requestProducts();
+  }
+
+  /// 从接口请求列表数据
+  Future<void> _requestProducts() async {
+    // TODO 后面再接入真实网络请求，这里模拟网络请求的数据(从本地读取 json 数据)
+    var productJson = await rootBundle.loadString("res/json/product_list.json");
+    var productList = (jsonDecode(productJson) as List)
+        .map((e) => Product.fromJson(e))
+        .toList();
+    setState(() {
+      _products = productList;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-        itemCount: 10,
+        itemCount: _products.length,
         padding: const EdgeInsets.all(5.0),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
@@ -75,13 +104,17 @@ class _HomePageBody extends StatelessWidget {
           childAspectRatio: 0.8,
         ),
         itemBuilder: (context, index) {
-          return _BookCard();
+          return _BookCard(_products[index]);
         });
   }
 }
 
 /// 列表每个卡片 Widget
 class _BookCard extends StatelessWidget {
+  final Product _product;
+
+  _BookCard(this._product);
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -99,8 +132,7 @@ class _BookCard extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: CachedNetworkImage(
-                imageUrl:
-                    "https://img1.doubanio.com/view/subject/l/public/s29195878.jpg",
+                imageUrl: _product.book.imgUrl,
                 fit: BoxFit.contain,
                 placeholder: (context, url) => Image.asset(
                   "res/images/img_loading.gif",
@@ -113,7 +145,7 @@ class _BookCard extends StatelessWidget {
                 horizontal: BookPadding.cardPadding,
               ),
               child: Text(
-                "深入理解计算机系统",
+                _product.book.name,
                 style: Theme.of(context).textTheme.display1,
               ),
             ),
@@ -127,8 +159,7 @@ class _BookCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        "http://5b0988e595225.cdn.sohucs.com/images/20180830/55833f7db8894d88b459588c33da5a19.jpeg"),
+                    backgroundImage: NetworkImage(_product.user.avatar),
                     backgroundColor: Colors.grey,
                     radius: 13.0,
                   ),
@@ -138,14 +169,14 @@ class _BookCard extends StatelessWidget {
                         horizontal: BookPadding.labelPadding,
                       ),
                       child: Text(
-                        "昵称",
+                        _product.user.name,
                         style: Theme.of(context).textTheme.display2,
                       ),
                     ),
                   ),
-                  Label("租"),
+                  Label(_product.getTypeLabel()),
                   Text(
-                    "￥2.0",
+                    "￥${_product.book.price == 0 ? "" : _product.book.price}",
                     style: TextStyle(
                       color: Colors.red,
                       fontSize: 13,
