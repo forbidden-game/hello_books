@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hellobooks/constant/constants.dart';
 import 'package:hellobooks/model/data.dart';
+import 'package:hellobooks/service/service.dart';
 import 'package:hellobooks/widgets/Label.dart';
 
 /// 首页(包含抽屉效果)
@@ -73,23 +73,25 @@ class _HomePageBody extends StatefulWidget {
 
 class __HomePageBodyState extends State<_HomePageBody> {
   List<Product> _products = [];
+  ProductServer _server;
 
   @override
   void initState() {
     super.initState();
+    _server = ProductServer();
     _requestProducts();
   }
 
   /// 从接口请求列表数据
   Future<void> _requestProducts() async {
-    // TODO 后面再接入真实网络请求，这里模拟网络请求的数据(从本地读取 json 数据)
-    var productJson = await rootBundle.loadString("res/json/product_list.json");
-    var productList = (jsonDecode(productJson) as List)
-        .map((e) => Product.fromJson(e))
-        .toList();
-    setState(() {
-      _products = productList;
-    });
+    try {
+      var productList = await _server.requestProducts();
+      setState(() {
+        _products = productList;
+      });
+    } catch (e) {
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
   }
 
   @override
@@ -169,14 +171,14 @@ class _BookCard extends StatelessWidget {
                         horizontal: BookPadding.labelPadding,
                       ),
                       child: Text(
-                        _product.user.name,
+                        _product.user.username,
                         style: Theme.of(context).textTheme.display2,
                       ),
                     ),
                   ),
                   Label(_product.getTypeLabel()),
                   Text(
-                    "￥${_product.book.price == 0 ? "" : _product.book.price}",
+                    "${_product.book.price == 0 ? "" : "￥${_product.book.price}"}",
                     style: TextStyle(
                       color: Colors.red,
                       fontSize: 13,
