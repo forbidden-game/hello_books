@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:hellobooks/constant/constants.dart';
 import 'package:hellobooks/model/data.dart';
 import 'package:hellobooks/service/service.dart';
-import 'package:hellobooks/widgets/Label.dart';
+import 'package:hellobooks/widgets/label.dart';
+import 'package:hellobooks/widgets/snackbar.dart';
 
 /// 首页(包含抽屉效果)
 class HomePage extends StatefulWidget {
@@ -36,13 +37,7 @@ class _HomePageState extends State<HomePage> {
               decoration: BoxDecoration(
                 color: Colors.blue,
               ),
-              child: Text(
-                '用户名',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
+              child: _UserHeader(),
             ),
             ListTile(
               leading: Icon(Icons.list),
@@ -61,6 +56,43 @@ class _HomePageState extends State<HomePage> {
         tooltip: '发布',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+/// 抽屉上方，用户头部信息
+class _UserHeader extends StatelessWidget {
+  final String avatar;
+  final String name;
+
+  const _UserHeader({this.avatar, this.name});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, "loginRoute");
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          CircleAvatar(
+            backgroundImage: NetworkImage(avatar ?? ""),
+            backgroundColor: Colors.grey,
+            radius: 30.0,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Text(
+              name ?? "请登录",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20.0,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -90,7 +122,7 @@ class __HomePageBodyState extends State<_HomePageBody> {
         _products = productList;
       });
     } catch (e) {
-      Scaffold.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      BookSnackBar.showSnackBar(context, e.toString());
     }
   }
 
