@@ -1,6 +1,7 @@
 import 'package:data_plugin/bmob/table/bmob_object.dart';
 import 'package:data_plugin/bmob/table/bmob_user.dart';
 
+/// 书对象，对象需要继承 Bmob 的 BmobObject 对象
 class Book extends BmobObject {
   final String name;
   final String desc; // 简介
@@ -18,8 +19,16 @@ class Book extends BmobObject {
       imgUrl: json["imgUrl"],
       price: json["price"],
       category: json["category"],
-    )..objectId = json['objectId'];
+    ).._fromJson(json);
   }
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        "name": name,
+        "desc": desc,
+        "imgUrl": imgUrl,
+        "price": price,
+        "category": category,
+      }..addAll(_toJson());
 
   BookCategory get bookCategory => BookCategory.values.firstWhere(
         (category) => category.toString() == this.category,
@@ -28,8 +37,7 @@ class Book extends BmobObject {
 
   @override
   Map getParams() {
-    // TODO toJson()
-    return null;
+    return toJson();
   }
 }
 
@@ -44,64 +52,56 @@ enum BookCategory {
   unknown
 }
 
+/// 用户对象
 class User extends BmobUser {
   final String avatar;
 
   User({this.avatar}) : super();
 
   factory User.fromJson(Map<String, dynamic> json) {
-    return User(avatar: json["avatar"])
-      ..objectId = json['objectId']
-      ..username = json["username"];
+    return User(avatar: json["avatar"]).._fromJson(json);
   }
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        "avatar": avatar,
+      }..addAll(_toJson());
 
   @override
   Map getParams() {
-    // TODO toJson()
-    return null;
+    return toJson();
   }
 }
 
 /// 把用户发布的每一条信息（租书、换书）视为一个"产品"
-/// 看上去 Bmob 的查询功能比较弱，除非写云函数，这里采用比较 low 的方式：
-/// 避免表的联合查询，一个表中保存比较多的信息，获取到数据后再转为对应的 User 和 Book 对象
 class Product extends BmobObject {
   final String bookId;
   final String userId;
   final String type;
-  User _user;
-  Book _book;
+  final User user;
+  final Book book;
 
-  Product({this.bookId, this.userId, this.type}) : super(); // 产品类型
+  Product({this.bookId, this.userId, this.type, this.user, this.book})
+      : super();
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-        bookId: json["bookId"], userId: json["userId"], type: json["type"])
-      ..objectId = json["objectId"]
-      .._user = (User(avatar: json["userAvatar"])
-        ..objectId = json["userId"]
-        ..username = json["userName"])
-      .._book = (Book(
-          name: json["bookName"],
-          imgUrl: json["bookImgUrl"],
-          price: json["bookPrice"],
-          category: json["bookCategory"])
-        ..objectId = json["bookId"]);
+      bookId: json["bookId"],
+      userId: json["userId"],
+      type: json["type"],
+      user: User.fromJson(json["user"]),
+      book: Book.fromJson(json["book"]),
+    ).._fromJson(json);
   }
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        "bookId": bookId,
+        "userId": userId,
+        "type": type,
+        "user": user.toJson(),
+        "book": book.toJson(),
+      }..addAll(_toJson());
 
   String getTypeLabel() => type == ProductType.swap.toString() ? "换" : "租";
-
-  User get user => _user;
-
-  set user(User value) {
-    _user = value;
-  }
-
-  Book get book => _book;
-
-  set book(Book value) {
-    _book = value;
-  }
 
   @override
   Map getParams() {
@@ -112,3 +112,46 @@ class Product extends BmobObject {
 
 /// 商品类型，目前支持：交换、出租
 enum ProductType { swap, rent }
+
+/// 给 Bmob 基类对象添加扩展方法，以实现 json 序列化与反序列化
+extension JsonParsing on BmobObject {
+  void _fromJson(Map<String, dynamic> json) {
+    objectId = json["objectId"];
+    createdAt = json["createdAt"];
+    updatedAt = json["updatedAt"];
+  }
+
+  Map<String, dynamic> _toJson() => <String, dynamic>{
+        'createdAt': createdAt,
+        'updatedAt': updatedAt,
+        'objectId': objectId
+      };
+}
+
+extension UserJsonParsing on BmobUser {
+  void _fromJson(Map<String, dynamic> json) {
+    objectId = json["objectId"];
+    createdAt = json["createdAt"];
+    updatedAt = json["updatedAt"];
+    username = json['username'];
+    password = json['password'];
+    email = json['email'];
+    emailVerified = json['emailVerified'];
+    mobilePhoneNumber = json['mobilePhoneNumber'];
+    mobilePhoneNumberVerified = json['mobilePhoneNumberVerified'];
+    sessionToken = json['sessionToken'];
+  }
+
+  Map<String, dynamic> _toJson() => <String, dynamic>{
+        'createdAt': createdAt,
+        'updatedAt': updatedAt,
+        'objectId': objectId,
+        'username': username,
+        'password': password,
+        'email': email,
+        'emailVerified': emailVerified,
+        'mobilePhoneNumber': mobilePhoneNumber,
+        'mobilePhoneNumberVerified': mobilePhoneNumberVerified,
+        'sessionToken': sessionToken
+      };
+}
