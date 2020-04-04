@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hellobooks/constant/constants.dart';
+import 'package:hellobooks/helper/user_helper.dart';
+import 'package:hellobooks/service/service.dart';
 import 'package:hellobooks/widgets/snackbar.dart';
 
 class LoginPage extends StatefulWidget {
@@ -19,10 +21,25 @@ class _LoginPageState extends State<LoginPage> {
         alignment: Alignment.center,
         padding: const EdgeInsets.all(BookPadding.pagePadding),
         child: Container(
-          child: _LoginFormWidget(),
+          child: _LoginFormWidget((userName, password) {
+            _login(userName, password);
+          }),
         ),
       ),
     );
+  }
+
+  Future<void> _login(String userName, String password) async {
+    var server = UserServer();
+    try {
+      // 登录成功后，将用户信息序列化保存到本地，以后都从本地获取当前用户对象
+      var bmobUser = await server.login(userName, password);
+      var user = await server.getUser(bmobUser.objectId);
+      await UserHelper.logIn(user);
+      Navigator.pop<bool>(context, true);
+    } catch (e) {
+      BookSnackBar.showSnackBar(context, "登录失败 ${e.toString()}");
+    }
   }
 }
 
@@ -31,6 +48,9 @@ class _LoginFormWidget extends StatelessWidget {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController pwdController = TextEditingController();
   final GlobalKey formKey = GlobalKey<FormState>();
+  final Function(String, String) onLoginClick;
+
+  _LoginFormWidget(this.onLoginClick);
 
   @override
   Widget build(BuildContext context) {
@@ -82,8 +102,7 @@ class _LoginFormWidget extends StatelessWidget {
                       // 通过_formKey.currentState 获取FormState后，
                       // 调用validate()方法校验用户名密码是否合法，校验通过后再提交数据。
                       if ((formKey.currentState as FormState).validate()) {
-                        //TODO 验证通过提交数据
-                        BookSnackBar.showSnackBar(context, "可以登录了");
+                        onLoginClick(nameController.text, pwdController.text);
                       }
                     },
                   ),

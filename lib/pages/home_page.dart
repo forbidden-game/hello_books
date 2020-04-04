@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hellobooks/constant/constants.dart';
+import 'package:hellobooks/helper/user_helper.dart';
 import 'package:hellobooks/model/data.dart';
 import 'package:hellobooks/service/service.dart';
 import 'package:hellobooks/widgets/label.dart';
@@ -61,17 +62,41 @@ class _HomePageState extends State<HomePage> {
 }
 
 /// 抽屉上方，用户头部信息
-class _UserHeader extends StatelessWidget {
-  final String avatar;
-  final String name;
+class _UserHeader extends StatefulWidget {
+  const _UserHeader();
 
-  const _UserHeader({this.avatar, this.name});
+  @override
+  __UserHeaderState createState() => __UserHeaderState();
+}
+
+class __UserHeaderState extends State<_UserHeader> {
+  String avatar;
+  String userName;
+
+  __UserHeaderState();
+
+  @override
+  void initState() {
+    super.initState();
+    initUser();
+  }
+
+  Future<void> initUser() async {
+    var user = await UserHelper.getCurUser();
+    if (user != null) {
+      avatar = user.avatar;
+      userName = user.username;
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, "loginRoute");
+        onHeaderTap();
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -84,7 +109,7 @@ class _UserHeader extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Text(
-              name ?? "请登录",
+              userName ?? "请登录",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 20.0,
@@ -94,6 +119,21 @@ class _UserHeader extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> onHeaderTap() async {
+    if (UserHelper.isLogin) {
+      // TODO 打开用户中心？
+    } else {
+      var loginResult = await Navigator.pushNamed(context, "loginRoute");
+      if (loginResult) {
+        var user = await UserHelper.getCurUser();
+        setState(() {
+          avatar = user.avatar;
+          userName = user.username;
+        });
+      }
+    }
   }
 }
 
