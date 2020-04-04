@@ -14,4 +14,5 @@ class BookColors {
   static const textGrey = Color(0xFF999999);
   static const hintColor = Color(0xFFCCCCCC);
   static const dividerColor = Color(0xFFE8E8E8);
+  static const alertColor = Color(0xFFFF6600);
 }

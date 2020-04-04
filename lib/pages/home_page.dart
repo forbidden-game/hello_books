@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
-          children: const <Widget>[
+          children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
                 color: Colors.blue,
@@ -45,6 +45,9 @@ class _HomePageState extends State<HomePage> {
               title: Text('订单'),
             ),
             ListTile(
+              onTap: () {
+                onSettingTap();
+              },
               leading: Icon(Icons.settings),
               title: Text('设置'),
             ),
@@ -58,6 +61,17 @@ class _HomePageState extends State<HomePage> {
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  Future<void> onSettingTap() async {
+    if (await UserHelper.isLogin) {
+      var logout = await Navigator.pushNamed(context, "settingRoute");
+      if (logout) {
+        BookSnackBar.showSnackBar(context, "退出了");
+      }
+    } else {
+      BookSnackBar.showSnackBar(context, "请先登录");
+    }
   }
 }
 
@@ -81,14 +95,18 @@ class __UserHeaderState extends State<_UserHeader> {
     initUser();
   }
 
+  @override
+  void didUpdateWidget(_UserHeader oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    initUser();
+  }
+
   Future<void> initUser() async {
     var user = await UserHelper.getCurUser();
-    if (user != null) {
-      avatar = user.avatar;
-      userName = user.username;
-      if (mounted) {
-        setState(() {});
-      }
+    avatar = user?.avatar ?? null;
+    userName = user?.username ?? null;
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -122,7 +140,7 @@ class __UserHeaderState extends State<_UserHeader> {
   }
 
   Future<void> onHeaderTap() async {
-    if (UserHelper.isLogin) {
+    if (await UserHelper.isLogin) {
       // TODO 打开用户中心？
     } else {
       var loginResult = await Navigator.pushNamed(context, "loginRoute");
