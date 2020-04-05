@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hellobooks/constant/constants.dart';
 import 'package:hellobooks/helper/user_helper.dart';
 import 'package:hellobooks/service/service.dart';
-import 'package:hellobooks/widgets/snackbar.dart';
+import 'package:hellobooks/widgets/toast.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -38,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
       await UserHelper.logIn(user);
       Navigator.pop<bool>(context, true);
     } catch (e) {
-      BookSnackBar.showSnackBar(context, "登录失败 ${e.toString()}");
+      BookToast.toast("登录失败 ${e.toString()}");
     }
   }
 }

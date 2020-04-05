@@ -7,7 +7,7 @@ import 'package:hellobooks/helper/user_helper.dart';
 import 'package:hellobooks/model/data.dart';
 import 'package:hellobooks/service/service.dart';
 import 'package:hellobooks/widgets/label.dart';
-import 'package:hellobooks/widgets/snackbar.dart';
+import 'package:hellobooks/widgets/toast.dart';
 
 /// 首页(包含抽屉效果)
 class HomePage extends StatefulWidget {
@@ -67,10 +67,10 @@ class _HomePageState extends State<HomePage> {
     if (await UserHelper.isLogin) {
       var logout = await Navigator.pushNamed(context, "settingRoute");
       if (logout) {
-        BookSnackBar.showSnackBar(context, "退出了");
+        BookToast.toast("退出了");
       }
     } else {
-      BookSnackBar.showSnackBar(context, "请先登录");
+      BookToast.toast("请先登录");
     }
   }
 }
@@ -180,7 +180,7 @@ class __HomePageBodyState extends State<_HomePageBody> {
         _products = productList;
       });
     } catch (e) {
-      BookSnackBar.showSnackBar(context, e.toString());
+      BookToast.toast(e.toString());
     }
   }
 
