@@ -23,7 +23,10 @@ dependencies:
   cached_network_image: ^2.0.0
   # 比目后端云 SDK
   data_plugin: ^0.0.17
+  # 显示 Toast 提示
   fluttertoast: ^4.0.0
+  # 从相机或者相册获取照片
+  image_picker: ^0.6.4
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

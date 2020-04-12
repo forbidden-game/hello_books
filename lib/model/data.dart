@@ -1,5 +1,6 @@
 import 'package:data_plugin/bmob/table/bmob_object.dart';
 import 'package:data_plugin/bmob/table/bmob_user.dart';
+import 'package:data_plugin/bmob/type/bmob_file.dart';
 
 /// 书对象，对象需要继承 Bmob 的 BmobObject 对象
 class Book extends BmobObject {
@@ -8,9 +9,16 @@ class Book extends BmobObject {
   final String imgUrl;
   final int price; // 价格简单处理，直接设置为 int 类型
   final String category;
+  final BmobFile picture;
 
-  Book({this.name, this.desc, this.imgUrl, this.price, this.category})
-      : super();
+  Book({
+    this.name,
+    this.desc,
+    this.imgUrl,
+    this.price,
+    this.category,
+    this.picture,
+  }) : super();
 
   factory Book.fromJson(Map<String, dynamic> json) {
     return Book(
@@ -19,6 +27,7 @@ class Book extends BmobObject {
       imgUrl: json["imgUrl"],
       price: json["price"],
       category: json["category"],
+      picture: BmobFile.fromJson(json["picture"]),
     ).._fromJson(json);
   }
 
@@ -28,6 +37,7 @@ class Book extends BmobObject {
         "imgUrl": imgUrl,
         "price": price,
         "category": category,
+        "picture": picture,
       }..addAll(_toJson());
 
   BookCategory get bookCategory => BookCategory.values.firstWhere(
@@ -50,6 +60,32 @@ enum BookCategory {
   art,
   science,
   unknown
+}
+
+/// 从图书类型枚举到中文的映射
+const _BookCategoryMap = {
+  BookCategory.computer: "计算机",
+  BookCategory.philosophy: "哲学",
+  BookCategory.economics: "经济学",
+  BookCategory.literature: "文学",
+  BookCategory.art: "艺术",
+  BookCategory.science: "自然科学",
+  BookCategory.unknown: "其他"
+};
+
+/// 通过扩展函数的方式，完成从图书类型枚举到中文间的转换
+extension TransferCategory on BookCategory {
+  String convertToChinese() => _BookCategoryMap[this];
+
+  BookCategory fromChinese(String chinese) {
+    BookCategory category;
+    _BookCategoryMap.forEach((key, value) {
+      if (value == chinese) {
+        category = this;
+      }
+    });
+    return category ?? BookCategory.unknown;
+  }
 }
 
 /// 用户对象
@@ -105,13 +141,29 @@ class Product extends BmobObject {
 
   @override
   Map getParams() {
-    // TODO: toJson()
-    return null;
+    return toJson();
   }
 }
 
 /// 商品类型，目前支持：交换、出租
 enum ProductType { swap, rent }
+
+const _ProductTypeMap = {ProductType.swap: "交换", ProductType.rent: "出租"};
+
+/// 通过扩展函数的方式，完成从商品类型枚举到中文间的转换
+extension TransferType on ProductType {
+  String convertToChinese() => _ProductTypeMap[this];
+
+  ProductType fromChinese(String chinese) {
+    ProductType type;
+    _ProductTypeMap.forEach((key, value) {
+      if (value == chinese) {
+        type = this;
+      }
+    });
+    return type ?? ProductType.swap;
+  }
+}
 
 /// 给 Bmob 基类对象添加扩展方法，以实现 json 序列化与反序列化
 extension JsonParsing on BmobObject {

@@ -19,8 +19,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  void _launchPublishPage() {
-    // TODO 跳转到发布新的出租信息
+  void _launchPublishPage() async {
+    if (await UserHelper.isLogin) {
+      Navigator.pushNamed(context, "publishRoute");
+    } else {
+      BookToast.toast("请先登录");
+    }
   }
 
   @override
