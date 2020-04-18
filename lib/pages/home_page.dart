@@ -19,12 +19,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  void _launchPublishPage() async {
-    if (await UserHelper.isLogin) {
-      Navigator.pushNamed(context, "publishRoute");
-    } else {
-      BookToast.toast("请先登录");
-    }
+  List<Product> _products = [];
+  ProductServer _server;
+
+  @override
+  void initState() {
+    super.initState();
+    _server = ProductServer();
+    _requestProducts();
   }
 
   @override
@@ -58,13 +60,47 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: _HomePageBody(),
+      body: GridView.builder(
+          itemCount: _products.length,
+          padding: const EdgeInsets.all(5.0),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 5.0,
+            mainAxisSpacing: 5.0,
+            childAspectRatio: 0.8,
+          ),
+          itemBuilder: (context, index) {
+            return _BookCard(_products[index]);
+          }),
       floatingActionButton: FloatingActionButton(
         onPressed: _launchPublishPage,
         tooltip: '发布',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  /// 从接口请求列表数据
+  Future<void> _requestProducts() async {
+    try {
+      var productList = await _server.requestProducts();
+      setState(() {
+        _products = productList;
+      });
+    } catch (e) {
+      BookToast.toast(e.toString());
+    }
+  }
+
+  void _launchPublishPage() async {
+    if (await UserHelper.isLogin) {
+      var published = await Navigator.pushNamed(context, "publishRoute");
+      if (published) {
+        _requestProducts();
+      }
+    } else {
+      BookToast.toast("请先登录");
+    }
   }
 
   Future<void> onSettingTap() async {
@@ -156,52 +192,6 @@ class __UserHeaderState extends State<_UserHeader> {
         });
       }
     }
-  }
-}
-
-/// 首页 Body 部分
-class _HomePageBody extends StatefulWidget {
-  @override
-  __HomePageBodyState createState() => __HomePageBodyState();
-}
-
-class __HomePageBodyState extends State<_HomePageBody> {
-  List<Product> _products = [];
-  ProductServer _server;
-
-  @override
-  void initState() {
-    super.initState();
-    _server = ProductServer();
-    _requestProducts();
-  }
-
-  /// 从接口请求列表数据
-  Future<void> _requestProducts() async {
-    try {
-      var productList = await _server.requestProducts();
-      setState(() {
-        _products = productList;
-      });
-    } catch (e) {
-      BookToast.toast(e.toString());
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-        itemCount: _products.length,
-        padding: const EdgeInsets.all(5.0),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 5.0,
-          mainAxisSpacing: 5.0,
-          childAspectRatio: 0.8,
-        ),
-        itemBuilder: (context, index) {
-          return _BookCard(_products[index]);
-        });
   }
 }
 

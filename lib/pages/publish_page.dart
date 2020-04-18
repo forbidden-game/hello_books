@@ -172,9 +172,10 @@ class _PublishPageState extends State<PublishPage> {
                     _submitProduct(
                       name: nameController.text,
                       desc: descController.text,
-                      category: _selectedCategory == null
-                          ? BookCategory.unknown.toString()
-                          : _selectedCategory.toString(),
+                      category: _selectedCategory?.toString() ??
+                          BookCategory.unknown.toString(),
+                      productType: _selectedProductType?.toString() ??
+                          ProductType.swap.toString(),
                       price: ProductType.rent == _selectedProductType
                           ? int.parse(priceController.text)
                           : 0,
@@ -286,7 +287,7 @@ class _PublishPageState extends State<PublishPage> {
       );
       var productSaved = await productServer.uploadProduct(product);
       BookToast.toast("提交成功");
-      Navigator.pop(context);
+      Navigator.pop<bool>(context, true);
     } catch (e) {
       BookToast.toast("提交失败：$e");
     }

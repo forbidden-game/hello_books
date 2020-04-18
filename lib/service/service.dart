@@ -14,6 +14,8 @@ class ProductServer {
 
   Future<List<Product>> requestProducts() async {
     var bmobQuery = BmobQuery();
+    // 按创建时间倒序(字段前加 - 号)排列
+    bmobQuery.setOrder("-createdAt");
     var products = await bmobQuery.queryObjectsByTableName(tableName);
     var productList = products.map((e) => Product.fromJson(e)).toList();
     return productList;
