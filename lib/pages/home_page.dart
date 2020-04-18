@@ -107,7 +107,7 @@ class __UserHeaderState extends State<_UserHeader> {
 
   Future<void> initUser() async {
     var user = await UserHelper.getCurUser();
-    avatar = user?.avatar ?? null;
+    avatar = user?.avatar?.url ?? null;
     userName = user?.username ?? null;
     if (mounted) {
       setState(() {});
@@ -151,7 +151,7 @@ class __UserHeaderState extends State<_UserHeader> {
       if (loginResult) {
         var user = await UserHelper.getCurUser();
         setState(() {
-          avatar = user.avatar;
+          avatar = user.avatar.url;
           userName = user.username;
         });
       }
@@ -228,7 +228,7 @@ class _BookCard extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: CachedNetworkImage(
-                imageUrl: _product.book.imgUrl,
+                imageUrl: _product.book.picture.url,
                 fit: BoxFit.contain,
                 placeholder: (context, url) => Image.asset(
                   "res/images/img_loading.gif",
@@ -255,7 +255,7 @@ class _BookCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   CircleAvatar(
-                    backgroundImage: NetworkImage(_product.user.avatar),
+                    backgroundImage: NetworkImage(_product.user.avatar.url),
                     backgroundColor: Colors.grey,
                     radius: 13.0,
                   ),

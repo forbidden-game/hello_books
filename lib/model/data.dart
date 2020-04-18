@@ -6,7 +6,6 @@ import 'package:data_plugin/bmob/type/bmob_file.dart';
 class Book extends BmobObject {
   final String name;
   final String desc; // 简介
-  final String imgUrl;
   final int price; // 价格简单处理，直接设置为 int 类型
   final String category;
   final BmobFile picture;
@@ -14,7 +13,6 @@ class Book extends BmobObject {
   Book({
     this.name,
     this.desc,
-    this.imgUrl,
     this.price,
     this.category,
     this.picture,
@@ -24,17 +22,16 @@ class Book extends BmobObject {
     return Book(
       name: json["name"],
       desc: json["desc"],
-      imgUrl: json["imgUrl"],
       price: json["price"],
       category: json["category"],
-      picture: BmobFile.fromJson(json["picture"]),
+      picture:
+          json["picture"] == null ? null : BmobFile.fromJson(json["picture"]),
     ).._fromJson(json);
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         "name": name,
         "desc": desc,
-        "imgUrl": imgUrl,
         "price": price,
         "category": category,
         "picture": picture,
@@ -90,12 +87,14 @@ extension TransferCategory on BookCategory {
 
 /// 用户对象
 class User extends BmobUser {
-  final String avatar;
+  final BmobFile avatar;
 
   User({this.avatar}) : super();
 
   factory User.fromJson(Map<String, dynamic> json) {
-    return User(avatar: json["avatar"]).._fromJson(json);
+    return User(
+      avatar: json["avatar"] == null ? null : BmobFile.fromJson(json["avatar"]),
+    ).._fromJson(json);
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{

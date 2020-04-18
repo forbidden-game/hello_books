@@ -272,7 +272,6 @@ class _PublishPageState extends State<PublishPage> {
         category: category,
         price: price,
         picture: bmobFile,
-        imgUrl: bmobFile.url,
       );
       var bookSaved = await bookServer.uploadBook(book);
       book.objectId = bookSaved.objectId;
