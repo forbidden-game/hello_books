@@ -68,14 +68,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> onSettingTap() async {
-    if (await UserHelper.isLogin) {
-      var logout = await Navigator.pushNamed(context, "settingRoute");
-      if (logout) {
-        BookToast.toast("退出了");
-      }
-    } else {
-      BookToast.toast("请先登录");
-    }
+    BookToast.toast("别急，还没开发~");
   }
 }
 
