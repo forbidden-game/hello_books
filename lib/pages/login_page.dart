@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
       // 登录成功后，将用户信息序列化保存到本地，以后都从本地获取当前用户对象
       var bmobUser = await server.login(userName, password);
       var user = await server.getUser(bmobUser.objectId);
-      await UserHelper.logIn(user);
+      await UserHelper.saveUser(user);
       Navigator.pop<bool>(context, true);
     } catch (e) {
       BookToast.toast("登录失败 ${e.toString()}");

@@ -44,6 +44,13 @@ class UserServer {
     var user = User.fromJson(jsonMap);
     return user;
   }
+
+  /// 上传头像
+  Future<BmobFile> uploadAvatar(File image) async {
+    // 上传文件
+    var bmobFile = await BmobFileManager.upload(image);
+    return bmobFile;
+  }
 }
 
 /// 书籍 Server 类，主要用于书籍相关的接口请求

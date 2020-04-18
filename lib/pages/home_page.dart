@@ -145,7 +145,14 @@ class __UserHeaderState extends State<_UserHeader> {
 
   Future<void> onHeaderTap() async {
     if (await UserHelper.isLogin) {
-      // TODO 打开用户中心？
+      var changed = await Navigator.pushNamed(context, "userCenterRoute");
+      if (changed) {
+        var user = await UserHelper.getCurUser();
+        setState(() {
+          avatar = user?.avatar?.url ?? null;
+          userName = user?.username ?? null;
+        });
+      }
     } else {
       var loginResult = await Navigator.pushNamed(context, "loginRoute");
       if (loginResult) {

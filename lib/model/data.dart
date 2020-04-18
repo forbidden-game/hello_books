@@ -87,7 +87,7 @@ extension TransferCategory on BookCategory {
 
 /// 用户对象
 class User extends BmobUser {
-  final BmobFile avatar;
+  BmobFile avatar;
 
   User({this.avatar}) : super();
 

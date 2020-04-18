@@ -265,6 +265,7 @@ class _PublishPageState extends State<PublishPage> {
     var bookServer = BookServer();
     var productServer = ProductServer();
     try {
+      BookToast.toast("提交中，请稍后...", isLong: true);
       var bmobFile = await bookServer.uploadBookPicture(image);
       var book = Book(
         name: nameController.text,
@@ -285,6 +286,7 @@ class _PublishPageState extends State<PublishPage> {
       );
       var productSaved = await productServer.uploadProduct(product);
       BookToast.toast("提交成功");
+      Navigator.pop(context);
     } catch (e) {
       BookToast.toast("提交失败：$e");
     }

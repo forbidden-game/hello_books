@@ -11,7 +11,7 @@ class UserHelper {
   static Future<bool> get isLogin async => await getCurUser() != null;
 
   /// 登录，将当前用户序列化后保存
-  static Future<void> logIn(User user) async {
+  static Future<void> saveUser(User user) async {
     var prefs = await SharedPreferences.getInstance();
     prefs.setString(keyUser, jsonEncode(user));
   }
