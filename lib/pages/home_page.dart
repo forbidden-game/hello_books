@@ -47,12 +47,15 @@ class _HomePageState extends State<HomePage> {
               child: _UserHeader(),
             ),
             ListTile(
+              onTap: () {
+                BookToast.toast("别急，还没开发~");
+              },
               leading: Icon(Icons.list),
               title: Text('订单'),
             ),
             ListTile(
               onTap: () {
-                onSettingTap();
+                BookToast.toast("别急，还没开发~");
               },
               leading: Icon(Icons.settings),
               title: Text('设置'),
@@ -101,10 +104,6 @@ class _HomePageState extends State<HomePage> {
     } else {
       BookToast.toast("请先登录");
     }
-  }
-
-  Future<void> onSettingTap() async {
-    BookToast.toast("别急，还没开发~");
   }
 }
 
