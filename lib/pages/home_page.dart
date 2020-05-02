@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hellobooks/constant/constants.dart';
 import 'package:hellobooks/helper/user_helper.dart';
 import 'package:hellobooks/model/data.dart';
+import 'package:hellobooks/pages/product_detail_page.dart';
 import 'package:hellobooks/service/service.dart';
 import 'package:hellobooks/widgets/label.dart';
 import 'package:hellobooks/widgets/toast.dart';
@@ -204,7 +205,15 @@ class _BookCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        debugPrint("test");
+        Navigator.pushNamed(
+          context,
+          "productDetailRoute",
+          arguments: ProductDetailArguments(
+            pictureList: [_product.book.picture.url ?? ""],
+            index: 0,
+            product: _product,
+          ),
+        );
       },
       child: Card(
         clipBehavior: Clip.antiAlias,

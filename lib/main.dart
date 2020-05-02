@@ -1,5 +1,6 @@
 import 'package:data_plugin/bmob/bmob.dart';
 import 'package:flutter/material.dart';
+import 'package:hellobooks/pages/product_detail_page.dart';
 import 'package:hellobooks/pages/user_center_page.dart';
 import 'constant/constants.dart';
 import 'pages/home_page.dart';
@@ -75,6 +76,7 @@ class MyApp extends StatelessWidget {
         'loginRoute': (BuildContext context) => LoginPage(),
         'publishRoute': (BuildContext context) => PublishPage(),
         'userCenterRoute': (BuildContext context) => UserCenterPage(),
+        'productDetailRoute': (BuildContext context) => ProductDetailPage(),
       },
     );
   }
