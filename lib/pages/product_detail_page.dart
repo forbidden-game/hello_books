@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hellobooks/constant/constants.dart';
 import 'package:hellobooks/model/data.dart';
 import 'package:hellobooks/widgets/toast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// 产品详情页：以展示一张大图为主页面
 class ProductDetailArguments {
@@ -57,7 +58,10 @@ class _ProductDetailPageState extends State<ProductDetailPage>
   }
 
   Widget build(BuildContext context) {
-    args = ModalRoute.of(context).settings.arguments;
+    args = ModalRoute
+        .of(context)
+        .settings
+        .arguments;
     Widget result = Scaffold(
       body: GestureDetector(
         onTap: () {
@@ -191,12 +195,10 @@ class BottomBarWidget extends StatefulWidget {
   final int index;
   final StreamController<int> reBuild;
 
-  BottomBarWidget(
-    this.pictures,
-    this.product,
-    this.index,
-    this.reBuild,
-  );
+  BottomBarWidget(this.pictures,
+      this.product,
+      this.index,
+      this.reBuild,);
 
   @override
   _BottomBarWidgetState createState() => _BottomBarWidgetState();
@@ -223,7 +225,7 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
                   icon: Icon(Icons.favorite),
                   iconSize: 30.0,
                   color:
-                      favorite ? BookColors.alertColor : BookColors.hintColor,
+                  favorite ? BookColors.alertColor : BookColors.hintColor,
                   highlightColor: BookColors.alertColor,
                   onPressed: () {
                     setState(() {
@@ -239,26 +241,36 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
               child: ListTile(
                 leading: CircleAvatar(
                   backgroundImage:
-                      NetworkImage(widget.product.user.avatar.url ?? ""),
+                  NetworkImage(widget.product.user.avatar.url ?? ""),
                   backgroundColor: Colors.grey,
                   radius: 20.0,
                 ),
-                title: Text(
-                  widget.product.user.username ?? "",
-                  style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: BookColors.alertColor),
+                title: GestureDetector(
+                  onTap: () {
+                    _launchTel(widget.product.user.username ?? "");
+                  },
+                  child: Text(
+                    widget.product.user.username ?? "",
+                    style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: BookColors.alertColor),
+                  ),
                 ),
                 subtitle: Text(
                   widget.product.book.desc ?? "",
-                  style: Theme.of(context).textTheme.body2,
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .body2,
                 ),
                 trailing: RaisedButton(
                   padding: EdgeInsets.all(8.0),
                   child: Text("立即" + widget.product.getTypeLabel(),
                       style: TextStyle(fontSize: 16.0)),
-                  color: Theme.of(context).primaryColor,
+                  color: Theme
+                      .of(context)
+                      .primaryColor,
                   textColor: Colors.white,
                   onPressed: () {
                     BookToast.toast(
@@ -273,5 +285,15 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
       initialData: widget.index,
       stream: widget.reBuild.stream,
     );
+  }
+
+  /// 调起打电话面板
+  Future<void> _launchTel(String phoneNumber) async {
+    var url = 'tel:$phoneNumber';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw '无法打开拨号 $url';
+    }
   }
 }
