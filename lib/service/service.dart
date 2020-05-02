@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:data_plugin/bmob/bmob_file_manager.dart';
 import 'package:data_plugin/bmob/bmob_query.dart';
+import 'package:data_plugin/bmob/response/bmob_registered.dart';
 import 'package:data_plugin/bmob/response/bmob_saved.dart';
 import 'package:data_plugin/bmob/table/bmob_user.dart';
 import 'package:data_plugin/bmob/type/bmob_file.dart';
@@ -37,6 +38,14 @@ class UserServer {
       ..username = userName
       ..password = pwd;
     var bmobUser = await originUser.login();
+    return bmobUser;
+  }
+
+  Future<BmobRegistered> register(String userName, String pwd) async {
+    var originUser = User()
+      ..username = userName
+      ..password = pwd;
+    var bmobUser = await originUser.register();
     return bmobUser;
   }
 
