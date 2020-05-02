@@ -209,6 +209,20 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
   bool favorite = false;
 
   @override
+  void initState() {
+    initFavorite();
+    super.initState();
+  }
+
+  Future<void> initFavorite() async {
+    var favoriteSet = await UserHelper.getFavorites();
+    favorite = favoriteSet.contains(widget.product.objectId);
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return StreamBuilder<int>(
       builder: (BuildContext context, data) {
@@ -242,11 +256,13 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
                         widget.product.book.bookCategory.toString(),
                         CategoryWeight.favorite,
                       );
+                      UserHelper.favorite(widget.product.objectId);
                     } else {
                       UserHelper.unHobby(
                         widget.product.book.bookCategory.toString(),
                         CategoryWeight.favorite,
                       );
+                      UserHelper.unFavorite(widget.product.objectId);
                     }
                     BookToast.toast(favorite ? "已收藏" : "已取消收藏");
                   },

@@ -7,6 +7,7 @@ class UserHelper {
   // Bmob 在登录成功后保存用户时，key 使用的 user，这里就不适用 user 了
   static const keyUser = "curUser";
   static const keyHobbies = "hobbies";
+  static const keyFavorites = "favorites";
 
   /// 用户是否已经登录
   static Future<bool> get isLogin async => await getCurUser() != null;
@@ -61,6 +62,35 @@ class UserHelper {
       return hobbiesMap;
     } catch (e) {
       return {};
+    }
+  }
+
+  /// 保存用户收藏
+  static Future<void> favorite(String productId) async {
+    var prefs = await SharedPreferences.getInstance();
+    var curFavorites = await getFavorites();
+    curFavorites.add(productId);
+    await prefs.setString(keyFavorites, jsonEncode(curFavorites));
+  }
+
+  /// 取消收藏
+  static Future<void> unFavorite(String productId) async {
+    var prefs = await SharedPreferences.getInstance();
+    var curFavorites = await getFavorites();
+    curFavorites.remove(productId);
+    await prefs.setString(keyFavorites, jsonEncode(curFavorites));
+  }
+
+  /// 获取当前的所有收藏
+  /// TODO 应该用 Set 而不是 List
+  static Future<List<dynamic>> getFavorites() async {
+    try {
+      var prefs = await SharedPreferences.getInstance();
+      var favorites = prefs.get(keyFavorites);
+      var favoritesMap = jsonDecode(favorites);
+      return favoritesMap;
+    } catch (e) {
+      return [];
     }
   }
 }
