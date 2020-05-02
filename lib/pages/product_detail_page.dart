@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hellobooks/constant/constants.dart';
+import 'package:hellobooks/helper/user_helper.dart';
 import 'package:hellobooks/model/data.dart';
 import 'package:hellobooks/widgets/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -58,10 +59,7 @@ class _ProductDetailPageState extends State<ProductDetailPage>
   }
 
   Widget build(BuildContext context) {
-    args = ModalRoute
-        .of(context)
-        .settings
-        .arguments;
+    args = ModalRoute.of(context).settings.arguments;
     Widget result = Scaffold(
       body: GestureDetector(
         onTap: () {
@@ -195,10 +193,12 @@ class BottomBarWidget extends StatefulWidget {
   final int index;
   final StreamController<int> reBuild;
 
-  BottomBarWidget(this.pictures,
-      this.product,
-      this.index,
-      this.reBuild,);
+  BottomBarWidget(
+    this.pictures,
+    this.product,
+    this.index,
+    this.reBuild,
+  );
 
   @override
   _BottomBarWidgetState createState() => _BottomBarWidgetState();
@@ -225,12 +225,29 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
                   icon: Icon(Icons.favorite),
                   iconSize: 30.0,
                   color:
-                  favorite ? BookColors.alertColor : BookColors.hintColor,
+                      favorite ? BookColors.alertColor : BookColors.hintColor,
                   highlightColor: BookColors.alertColor,
-                  onPressed: () {
+                  tooltip: widget.product.book.bookCategory.convertToChinese(),
+                  onPressed: () async {
+                    if (!await UserHelper.isLogin) {
+                      BookToast.toast("请先登录");
+                      return;
+                    }
                     setState(() {
                       favorite = !favorite;
                     });
+                    // 注意，下面的方法是异步的
+                    if (favorite) {
+                      UserHelper.hobby(
+                        widget.product.book.bookCategory.toString(),
+                        CategoryWeight.favorite,
+                      );
+                    } else {
+                      UserHelper.unHobby(
+                        widget.product.book.bookCategory.toString(),
+                        CategoryWeight.favorite,
+                      );
+                    }
                     BookToast.toast(favorite ? "已收藏" : "已取消收藏");
                   },
                 ),
@@ -241,7 +258,7 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
               child: ListTile(
                 leading: CircleAvatar(
                   backgroundImage:
-                  NetworkImage(widget.product.user.avatar.url ?? ""),
+                      NetworkImage(widget.product.user.avatar.url ?? ""),
                   backgroundColor: Colors.grey,
                   radius: 20.0,
                 ),
@@ -250,7 +267,7 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
                     _launchTel(widget.product.user.username ?? "");
                   },
                   child: Text(
-                    widget.product.user.username ?? "",
+                    (widget.product.user.username ?? "") + "（现在联系）",
                     style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
@@ -259,20 +276,23 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
                 ),
                 subtitle: Text(
                   widget.product.book.desc ?? "",
-                  style: Theme
-                      .of(context)
-                      .textTheme
-                      .body2,
+                  style: Theme.of(context).textTheme.body2,
                 ),
                 trailing: RaisedButton(
                   padding: EdgeInsets.all(8.0),
                   child: Text("立即" + widget.product.getTypeLabel(),
                       style: TextStyle(fontSize: 16.0)),
-                  color: Theme
-                      .of(context)
-                      .primaryColor,
+                  color: Theme.of(context).primaryColor,
                   textColor: Colors.white,
-                  onPressed: () {
+                  onPressed: () async {
+                    if (!await UserHelper.isLogin) {
+                      BookToast.toast("请先登录");
+                      return;
+                    }
+                    UserHelper.hobby(
+                      widget.product.book.bookCategory.toString(),
+                      CategoryWeight.deal,
+                    );
                     BookToast.toast(
                         "模拟" + widget.product.getTypeLabel() + "完成");
                   },

@@ -64,18 +64,21 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: GridView.builder(
-          itemCount: _products.length,
-          padding: const EdgeInsets.all(5.0),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 5.0,
-            mainAxisSpacing: 5.0,
-            childAspectRatio: 0.8,
-          ),
-          itemBuilder: (context, index) {
-            return _BookCard(_products[index]);
-          }),
+      body: RefreshIndicator(
+        onRefresh: _requestProducts,
+        child: GridView.builder(
+            itemCount: _products.length,
+            padding: const EdgeInsets.all(5.0),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 5.0,
+              mainAxisSpacing: 5.0,
+              childAspectRatio: 0.8,
+            ),
+            itemBuilder: (context, index) {
+              return _BookCard(_products[index]);
+            }),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _launchPublishPage,
         tooltip: '发布',
@@ -88,6 +91,11 @@ class _HomePageState extends State<HomePage> {
   Future<void> _requestProducts() async {
     try {
       var productList = await _server.requestProducts();
+      // 获取到数据后，根据用户的偏爱进行排序
+      var userHobbiesMap = await UserHelper.getHobbies();
+      productList.sort((a, b) =>
+          (userHobbiesMap[b.book.bookCategory.toString()] ?? 0) -
+          (userHobbiesMap[a.book.bookCategory.toString()] ?? 0));
       setState(() {
         _products = productList;
       });
@@ -213,6 +221,10 @@ class _BookCard extends StatelessWidget {
             index: 0,
             product: _product,
           ),
+        );
+        UserHelper.hobby(
+          _product.book.bookCategory.toString(),
+          CategoryWeight.reading,
         );
       },
       child: Card(
