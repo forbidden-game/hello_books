@@ -12,8 +12,8 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Bmob.init("https://api2.bmob.cn", "74f5b87c766b555aa8c54a64e8d0b342",
-        "67d52147a92f3a55c40765ff86f355c7");
+    Bmob.initMasterKey("https://api2.bmob.cn", "74f5b87c766b555aa8c54a64e8d0b342",
+        "67d52147a92f3a55c40765ff86f355c7", "5a3859f35a138f10ec01a47cf0cefe1b");
     return MaterialApp(
       title: '租书吧',
       theme: ThemeData(

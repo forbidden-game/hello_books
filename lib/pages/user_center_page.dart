@@ -117,16 +117,17 @@ class _UserCenterPageState extends State<UserCenterPage> {
 
   /// 从相册或者相机获取图片
   Future<void> _getImage(ImageSource imgSource) async {
-    BookToast.toast("头像上传中...", isLong: true);
     var image = await ImagePicker.pickImage(source: imgSource);
     await _updateAvatar(image);
   }
 
   /// TODO 有 bug，更新完用户头像后应该更新所有已发布产品表中的 User 信息（以 json 格式保存）
   Future<void> _updateAvatar(File image) async {
+    BookToast.toast("头像上传中...", isLong: true);
     var userServer = UserServer();
     try {
       var bmobFile = await userServer.uploadAvatar(image);
+      await userServer.updateAvatar(bmobFile);
       _curUser.avatar = bmobFile;
       await UserHelper.saveUser(_curUser);
       setState(() {});

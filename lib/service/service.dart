@@ -4,8 +4,10 @@ import 'package:data_plugin/bmob/bmob_file_manager.dart';
 import 'package:data_plugin/bmob/bmob_query.dart';
 import 'package:data_plugin/bmob/response/bmob_registered.dart';
 import 'package:data_plugin/bmob/response/bmob_saved.dart';
+import 'package:data_plugin/bmob/response/bmob_updated.dart';
 import 'package:data_plugin/bmob/table/bmob_user.dart';
 import 'package:data_plugin/bmob/type/bmob_file.dart';
+import 'package:hellobooks/helper/user_helper.dart';
 import 'package:hellobooks/model/data.dart';
 
 /// 产品 Server 类，主要用于产品相关的接口请求
@@ -56,11 +58,19 @@ class UserServer {
     return user;
   }
 
-  /// 上传头像
+  /// 上传头像文件
   Future<BmobFile> uploadAvatar(File image) async {
     // 上传文件
     var bmobFile = await BmobFileManager.upload(image);
     return bmobFile;
+  }
+
+  /// 头像更新到数据库
+  Future<BmobUpdated> updateAvatar(BmobFile avatar) async {
+    var curUser = await UserHelper.getCurUser();
+    curUser.avatar = avatar;
+    var updated = await curUser.update();
+    return updated;
   }
 }
 
